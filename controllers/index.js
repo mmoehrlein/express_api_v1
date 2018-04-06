@@ -2,9 +2,9 @@ var express = require('express');
 var router = express.Router();
 
 
-router.use('/users', require('./usersController'));
-router.use('/dormip', require('./dormIpController'));
-router.use('/slides', require('./slidesController'));
+//router.use('/users', require('./usersController'));
+//router.use('/dormip', require('./dormIpController'));
+//router.use('/slides', require('./slidesController'));
 
 router.get('/', function(req, res){
     res.json({"message":"api index"});

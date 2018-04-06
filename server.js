@@ -4,7 +4,7 @@ const http = require('http');
 const bodyParser = require('body-parser');
 const jwtAuthz = require('express-jwt-authz');
 
-const checkJwt = require("middlewares/authMiddleware.js");
+const checkJwt = require("./middlewares/authMiddleware.js");
 const checkScopes = jwtAuthz(['read:messages']);
 
 
