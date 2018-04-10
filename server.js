@@ -63,12 +63,14 @@ passport.use(new LocalStrategy({session: false},
                         if(res === true){
                             user.password = undefined;
                             return done(null, user);
+                        } else {
+                            return done(null, false);
+
                         }
                     });
+                } else {
+                    return done(null, false);
                 }
-
-                return done(null, false);
-
             });
     }));
 
@@ -78,7 +80,10 @@ app.use('/api/' + process.env.API_VERSION, require('./controllers'));
 
 
 app.get('/', function(req, res){
-    res.json({"message": "working", "env":process.env});
+    res.json({
+        "message": "working",
+        "env": process.env
+    });
 });
 
 app.get('/public_test', function(req, res){
