@@ -1,11 +1,18 @@
+//express basics
 const express = require('express');
 const router = express.Router();
+
+//authentification
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');
+
+//Logger
 const log = require('../helpers/loggingHelper');
 
-const JWT_SECRET = process.env.JWT_SECRET || "5up3253Cr§T";
+//models
+const User = require('../models/userModel');
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 
 router.post('/login', passport.authenticate('local', {session: false}), function(req, res){
