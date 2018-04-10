@@ -20,11 +20,13 @@ var userSchema = mongoose.Schema({
     },
     scopes: [{
         type: String,
-        set: toLower
+        set: toLower,
+        default: []
     }],
     roles: [{
         type: String,
-        set: toLower
+        set: toLower,
+        default: ["user"]
     }],
     active: {
         type: Boolean,

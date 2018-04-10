@@ -33,17 +33,24 @@ router.post('/register', function(req, res){
 
     log.trace('beginnn register route');
 
+    var username = req.body.username;
+    var email = req.body.email;
+    var password = req.body.password;
+
+    if(!(username && email && password)){
+        return res.json('Username, email and passowrd are required fields!')
+    }
+
     var newUser = new User({
-        username: "test1Username",
-        password: "passwordTest",
-        email: "testuser@mail.com",
-        scopes: ["projects:write", "projects:read"],
-        roles: ["user", "mod"]
+        username: username,
+        password: password,
+        email: email
     });
 
     User.createUser(newUser, function(err, user, msg){
         if(err){
             log.error(err);
+            return res.json('user could not be created: ' + err.message)
         }
 
         if(user){
@@ -51,6 +58,7 @@ router.post('/register', function(req, res){
             log.info({"user": user}, 'new user has been created');
             return res.json(user);
         }
+
         res.statusCode = 400;
         return res.json(msg);
 
