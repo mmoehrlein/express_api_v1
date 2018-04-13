@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 
-//authentification
+//authentication
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
@@ -12,38 +12,41 @@ const log = require('../helpers/loggingHelper');
 //models
 const User = require('../models/userModel');
 
+//environment variables
 const JWT_SECRET = process.env.JWT_SECRET;
 
+//login route
+//using passport middleware to get userdata from database and save to req
+router.post('/login', passport.authenticate('local', {session: false}),
+    function(req, res){
+        var options = {
+            expiresIn: "1d",
+            issuer:"mmoehrlein.de/api"
+        };
 
-router.post('/login', passport.authenticate('local', {session: false}), function(req, res){
-    var options = {
-        expiresIn: "1d",
-        issuer:"mmoehrlein.de/api"
-    };
+        var payload = {
+            user: req.user
+        };
 
-    var payload = {
-        user: req.user
-    };
+        jwt.sign(payload , JWT_SECRET, options, function(err, token){
+            if(err){
+                return res.json(err);
+            }
 
-    jwt.sign(payload , JWT_SECRET, options, function(err, token){
-        if(err){
-            return res.json(err);
-        }
+                // Send Set-Cookie header
+                res.cookie('jwt', token, {
+                    httpOnly: true,
+                    sameSite: true,
+                    signed: true,
+                    secure: true
+                });
 
-        // Send Set-Cookie header
-        res.cookie('jwt', token, {
-            httpOnly: true,
-            sameSite: true,
-            signed: true,
-            secure: true
-        });
-
-        // Return json web token
-        return res.json({
-            jwt: token
-        });
+                // Return json web token
+                return res.json({
+                    jwt: token
+                });
+            });
     });
-});
 
 router.post('/register', function(req, res){
 
