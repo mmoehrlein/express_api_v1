@@ -5,17 +5,16 @@ const router = express.Router();
 //authentication
 const passport = require('passport');
 
+//middleware
+const checkActive = require('../middlewares/checkActiveMiddleware');
+
 //routing to controllers
 router.use('/users', require('./usersController'));
-router.use('/tests', passport.authenticate('jwt-cookiecombo', {
+
+router.use('/', passport.authenticate('jwt-cookiecombo', {
     session: false
-}), function(req, res, next){
-    if(req.user.active){
-        return next();
-    }else {
-        res.json({"error": "user needs to be activated"});
-    }
-}, require('./testsController'));
+}), checkActive);
+router.use('/tests', require('./testsController'));
 
 //TODO status  route
 router.get('/', function(req, res){
