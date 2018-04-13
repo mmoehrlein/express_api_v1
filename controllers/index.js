@@ -1,13 +1,13 @@
+//express basics
 const express = require('express');
 const router = express.Router();
 
-
+//routing
 router.use('/users', require('./usersController'));
-//router.use('/dormip', require('./dormIpController'));
-//router.use('/slides', require('./slidesController'));
 
+//TODO status  route
 router.get('/', function(req, res){
-    res.json({"message":"api index"});
+    res.json({"message": "api index"});
 });
 
 module.exports = router;

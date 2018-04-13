@@ -1,33 +1,50 @@
+//express basics
 const express = require('express');
 const router = express.Router();
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');
+
+//logging
 const log = require('../helpers/loggingHelper');
 
-const JWT_SECRET = process.env.JWT_SECRET || "5up3253Cr§T";
+//authentication
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
 
+//models
+const User = require('../models/userModel');
 
-router.post('/login', passport.authenticate('local', {session: false}), function(req, res){
-    jwt.sign({user: req.user}, JWT_SECRET, function(err, token){
-        if(err){
-            return res.json(err);
-        }
+//environment variables
+const JWT_SECRET = process.env.JWT_SECRET;
 
-        // Send Set-Cookie header
-        res.cookie('jwt', token, {
-            httpOnly: true,
-            sameSite: true,
-            signed: true,
-            secure: true
-        });
+//login route
+router.post('/login',
+    //using passport middleware to get userdata from database and save to req
+    passport.authenticate('local', {session: false}),
+    function(req, res){
+        //sign jwt token with userdata...
+        jwt.sign({
+                user: req.user
+            },
+            //... using the secret from environment
+            JWT_SECRET,
+            function(err, token){
+                if(err){
+                    return res.json(err);
+                }
 
-        // Return json web token
-        return res.json({
-            jwt: token
-        });
+                // Send Set-Cookie header
+                res.cookie('jwt', token, {
+                    httpOnly: true,
+                    sameSite: true,
+                    signed: true,
+                    secure: true
+                });
+
+                // Return json web token
+                return res.json({
+                    jwt: token
+                });
+            });
     });
-});
 
 router.post('/register', function(req, res){
 
@@ -38,7 +55,7 @@ router.post('/register', function(req, res){
     var password = req.body.password;
 
     if(!(username && email && password)){
-        return res.json('Username, email and passowrd are required fields!')
+        return res.json('Username, email and passowrd are required fields!');
     }
 
     var newUser = new User({
@@ -50,7 +67,7 @@ router.post('/register', function(req, res){
     User.createUser(newUser, function(err, user, msg){
         if(err){
             log.error(err);
-            return res.json('user could not be created: ' + err.message)
+            return res.json('user could not be created: ' + err.message);
         }
 
         if(user){
